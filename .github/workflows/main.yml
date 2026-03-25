@@ -1,0 +1,34 @@
+name: My First Pipeline
+
+# Когда запускать?
+on:
+  # При каждом пуше в ветку main
+  push:
+    branches: [ "main" ]
+  # Можно запускать вручную кнопкой (очень удобно для тестов)
+  workflow_dispatch:
+
+# Что делать?
+jobs:
+  # Назовем задачу "hello-job"
+  hello-job:
+    # Где запускать? (Ubuntu - это стандартный Linux сервер)
+    runs-on: ubuntu-latest
+
+    # Шаги выполнения
+    steps:
+      # Шаг 1: Просто вывод текста в консоль
+      - name: Say Hello
+        run: echo "Hello World! This is my first CI/CD pipeline!"
+
+      # Шаг 2: Проверка окружения (что есть на сервере?)
+      - name: Check Java Version
+        run: java -version
+
+      # Шаг 3: Проверка Docker (он уже установлен на Ubuntu!)
+      - name: Check Docker Version
+        run: docker --version
+
+      # Шаг 4: Проверка Docker Compose
+      - name: Check Docker Compose
+        run: docker-compose --version
