@@ -18,6 +18,7 @@ Thumbs.db
 *.log
 
 # --- Allure и Тесты (Результаты прогонов) ---
+.allure/
 allure-results/
 allure-report/
 surefire-reports/
