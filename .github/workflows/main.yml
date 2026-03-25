@@ -1,34 +1,23 @@
-name: My First Pipeline
+name: Run Tests in Docker
 
-# Когда запускать?
 on:
-  # При каждом пуше в ветку main
   push:
     branches: [ "main" ]
-  # Можно запускать вручную кнопкой (очень удобно для тестов)
   workflow_dispatch:
 
-# Что делать?
 jobs:
-  # Назовем задачу "hello-job"
-  hello-job:
-    # Где запускать? (Ubuntu - это стандартный Linux сервер)
+  test-in-docker:
     runs-on: ubuntu-latest
 
-    # Шаги выполнения
     steps:
-      # Шаг 1: Просто вывод текста в консоль
-      - name: Say Hello
-        run: echo "Hello World! This is my first CI/CD pipeline!"
+      # Шаг 1: Скачиваем код из репозитория на сервер
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      # Шаг 2: Проверка окружения (что есть на сервере?)
-      - name: Check Java Version
-        run: java -version
-
-      # Шаг 3: Проверка Docker (он уже установлен на Ubuntu!)
-      - name: Check Docker Version
-        run: docker --version
-
-      # Шаг 4: Проверка Docker Compose
-      - name: Check Docker Compose
-        run: docker-compose --version
+      # Шаг 2: Запускаем тесты через Docker Compose
+      # Обрати внимание: 'docker compose' без дефиса!
+      - name: Run Tests via Docker Compose
+        # Указываем папку, где лежит docker-compose.yml
+        working-directory: ./DockerTests
+        run: |
+          docker compose up --build --abort-on-container-exit --exit-code-from tests
