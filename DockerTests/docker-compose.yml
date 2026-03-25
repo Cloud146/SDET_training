@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # 1. Приложение
+  app:
+    build: ../TestStand
+    container_name: test-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/app/data/testdb;AUTO_SERVER=TRUE
+    volumes:
+      - ../TestStand/data:/app/data
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8080/api/users || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # 2. Браузер
+  selenium-chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: selenium-chrome
+    ports:
+      - "4444:4444"
+    shm_size: '2g'
+    networks:
+      - test-network
+    depends_on:
+      app:
+        condition: service_healthy
+
+  # 3. Тесты
+  tests:
+    build: .
+    container_name: tests-runner
+    depends_on:
+      - selenium-chrome
+      - app
+    environment:
+      - API_URL=http://test-app:8080/api
+      - HOST_URL=http://test-app:8080
+      - DB_URL=jdbc:h2:file:/app/data/testdb;AUTO_SERVER=TRUE
+      - DB_USER=sa
+      - DB_PASSWORD=password
+      - SELENIUM_URL=http://selenium-chrome:4444/wd/hub
+    volumes:
+      - ../TestStand/data:/app/data
+      - ./target/allure-results:/app/target/allure-results
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

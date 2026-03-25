@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Stand</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        h2 { margin-bottom: 20px; color: #333; }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover { background-color: #0056b3; }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 20px; /* Чтобы блок не прыгал */
+        }
+
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Регистрация</h2>
+
+    <form id="regForm" autocomplete="off">
+        <input type="text" id="username" placeholder="Логин"
+               autocomplete="off" readonly onfocus="this.removeAttribute('readonly');">
+
+        <input type="password" id="password" placeholder="Пароль"
+               autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');">
+
+        <button type="button" onclick="sendRegister()">Отправить</button>
+    </form>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    const API_URL = '/api';
+
+    async function sendRegister() {
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const resultElem = document.getElementById('result');
+
+        const user = usernameInput.value;
+        const pass = passwordInput.value;
+
+        if (!user || !pass) {
+            resultElem.className = 'error';
+            resultElem.innerText = "Заполните все поля!";
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                resultElem.className = 'success';
+                resultElem.innerText = `Пользователь успешно зарегистрирован!`;
+
+                usernameInput.value = '';
+                passwordInput.value = '';
+            } else {
+                const text = await response.text();
+                resultElem.className = 'error';
+                try {
+                    const errJson = JSON.parse(text);
+                    resultElem.innerText = `Ошибка: ${errJson.message || text}`;
+                } catch (e) {
+                    resultElem.innerText = `Ошибка: ${text}`;
+                }
+            }
+        } catch (error) {
+            resultElem.className = 'error';
+            resultElem.innerText = "Ошибка соединения с сервером";
+        }
+    }
+</script>
+
+</body>
+</html>
