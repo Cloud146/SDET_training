@@ -15,9 +15,17 @@ jobs:
         uses: actions/checkout@v4
 
       # Шаг 2: Запускаем тесты через Docker Compose
-      # Обрати внимание: 'docker compose' без дефиса!
       - name: Run Tests via Docker Compose
         # Указываем папку, где лежит docker-compose.yml
         working-directory: ./DockerTests
         run: |
           docker compose up --build --abort-on-container-exit --exit-code-from tests
+
+      # 3. Сохраняем результаты Allure
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-json
+          path: DockerTests/target/allure-results
+          retention-days: 5
