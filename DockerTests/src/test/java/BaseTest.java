@@ -1,9 +1,7 @@
 import io.qameta.allure.Attachment;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.AfterMethod;
@@ -28,11 +26,8 @@ public class BaseTest {
                 .addArguments("--disable-gpu")
                 .addArguments("--disable-extensions")
                 .addArguments("--disable-infobars")
-//                .addArguments("--start-maximized");
                 .addArguments("--window-size=1920,1080");
 
-        String hubUrlDocker = "http://host.docker.internal:4444/wd/hub";
-        String hubUrlLocal = "http://localhost:4444/wd/hub";
         String remoteUrl = System.getenv("SELENIUM_URL");
 
         System.out.println("SELENIUM SETUP: Connecting to URL: " + remoteUrl);
@@ -45,7 +40,6 @@ public class BaseTest {
             throw new RuntimeException("Не удалось подключиться к Selenium Grid", e);
         }
 
-//        driver.manage().window().setSize(new Dimension(1920, 1080));
     }
 
     @AfterMethod
