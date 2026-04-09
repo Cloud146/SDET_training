@@ -21,10 +21,15 @@ public class BaseTest {
     @BeforeMethod
     public void setUp() {
         ChromeOptions options = new ChromeOptions()
+                .addArguments("--headless=new")
+                .addArguments("--no-sandbox")
+                .addArguments("--disable-dev-shm-usage")
                 .addArguments("--remote-allow-origins=**")
                 .addArguments("--disable-gpu")
+                .addArguments("--disable-extensions")
                 .addArguments("--disable-infobars")
-                .addArguments("--start-maximized");
+//                .addArguments("--start-maximized");
+                .addArguments("--window-size=1920,1080");
 
         String hubUrlDocker = "http://host.docker.internal:4444/wd/hub";
         String hubUrlLocal = "http://localhost:4444/wd/hub";
@@ -40,7 +45,7 @@ public class BaseTest {
             throw new RuntimeException("Не удалось подключиться к Selenium Grid", e);
         }
 
-        driver.manage().window().setSize(new Dimension(1920, 1080));
+//        driver.manage().window().setSize(new Dimension(1920, 1080));
     }
 
     @AfterMethod
