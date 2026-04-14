@@ -22,14 +22,14 @@ pipeline {
     }
 
     post {
-        always {
-            script {
-                allure commandline: 'allure', results: [[path: 'DockerTests/target/allure-results']]
-            }
+            always {
+                sh 'ls -R DockerTests/target/allure-results'
 
-            dir('DockerTests') {
-                sh 'docker compose down'
+                allure includeProperties: false, jdk: '', results: [[path: 'DockerTests/target/allure-results']]
+
+                dir('DockerTests') {
+                    sh 'docker compose down'
+                }
             }
         }
-    }
 }
