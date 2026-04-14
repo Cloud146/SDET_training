@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. Приложение
+  # Приложение
   app:
     build: ../TestStand
     container_name: test-app
@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 10
 
-  # 2. Браузер
+  # Браузер
   selenium-chrome:
     image: selenium/standalone-chrome:latest
     container_name: selenium-chrome
@@ -32,7 +32,7 @@ services:
       app:
         condition: service_healthy
 
-  # 3. Тесты
+  # Тесты
   tests:
     build: .
     container_name: tests-runner

@@ -1,4 +1,4 @@
-# 1. Сборка (Build)
+# Build
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
@@ -7,7 +7,7 @@ COPY src ./src
 # Пропускаем тесты при сборке jar, чтобы не зависеть от окружения
 RUN mvn package -DskipTests
 
-# 2. Запуск (Run)
+# Run
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 # Копируем собранный JAR
