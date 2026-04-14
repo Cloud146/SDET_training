@@ -1,31 +1,126 @@
-name: Run Tests in Docker
+name: Run Tests in Docker + Allure Pages
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   test-in-docker:
     runs-on: ubuntu-latest
 
     steps:
-      # Шаг 1: Скачиваем код из репозитория на сервер
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Шаг 2: Запускаем тесты через Docker Compose
       - name: Run Tests via Docker Compose
-        # Указываем папку, где лежит docker-compose.yml
         working-directory: ./DockerTests
         run: |
           docker compose up --build --abort-on-container-exit --exit-code-from tests
 
-      # 3. Сохраняем результаты Allure
-      - name: Upload Allure Results
+      # Всегда тушим окружение (на всякий случай)
+      - name: Docker Compose Down
+        if: always()
+        working-directory: ./DockerTests
+        run: |
+          docker compose down || true
+
+      # Артефакт: сырые результаты Allure (JSON)
+      - name: Upload Allure Results (JSON)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-results-json
           path: DockerTests/target/allure-results
           retention-days: 5
+
+  publish-allure-pages:
+    # Публикуем отчёт даже если тесты упали (чтобы видеть фейлы)
+    if: always()
+    needs: test-in-docker
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout (optional)
+        uses: actions/checkout@v4
+
+      - name: Download Allure Results (JSON)
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-json
+          path: allure-results
+
+      # Восстанавливаем history для trends (из кэша)
+      - name: Restore Allure history cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .allure-history
+          key: allure-history-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            allure-history-${{ github.ref_name }}-
+
+      - name: Prepare Allure history
+        run: |
+          mkdir -p allure-results/history
+          if [ -d ".allure-history" ]; then
+            cp -r .allure-history/* allure-results/history/ || true
+          fi
+          echo "Allure results:"
+          ls -la allure-results || true
+          echo "Allure history:"
+          ls -la allure-results/history || true
+
+      # Ставим Allure CLI (лучше фиксированной версией)
+      - name: Install Allure CLI
+        run: |
+          curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.30.0/allure-2.30.0.tgz
+          tar -xzf allure.tgz
+          sudo ln -sf "$PWD/allure-2.30.0/bin/allure" /usr/local/bin/allure
+          allure --version
+
+      - name: Generate Allure HTML report
+        run: |
+          allure generate -c -o allure-report allure-results
+          echo "Allure report generated:"
+          ls -la allure-report || true
+          ls -la allure-report/history || true
+
+      # Сохраняем новую history в кэш для следующего прогона
+      - name: Save Allure history cache
+        uses: actions/cache/save@v4
+        with:
+          path: .allure-history
+          key: allure-history-${{ github.ref_name }}-${{ github.run_id }}
+
+      - name: Update cached history from report
+        run: |
+          rm -rf .allure-history || true
+          mkdir -p .allure-history
+          if [ -d "allure-report/history" ]; then
+            cp -r allure-report/history/* .allure-history/ || true
+          fi
+          echo "Cached history:"
+          ls -la .allure-history || true
+
+      # Загружаем сайт (allure-report) как Pages artifact
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report
+
+      # Деплоим на GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
