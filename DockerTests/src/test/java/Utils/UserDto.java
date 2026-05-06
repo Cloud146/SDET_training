@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 public class UserDto {
     private String username;
     private String password;
-    // id не нужен для отправки, но может прийти в ответе
     private Long id;
 }

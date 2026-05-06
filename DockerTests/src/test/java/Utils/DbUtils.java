@@ -11,10 +11,6 @@ import java.sql.Statement;
 
 public class DbUtils {
 
-    /**
-     * Выполняет SQL команды из файла
-     * @param fileName имя файла в папке src/test/resources/sql/
-     */
     public static void executeSqlFile(String fileName) {
         String sql = readSqlFromFile(fileName);
 
@@ -34,7 +30,6 @@ public class DbUtils {
 
     private static String readSqlFromFile(String fileName) {
         try {
-            // Ищем файл в ресурсах или по прямому пути
             Path path = Paths.get("src/test/resources/sql/" + fileName);
             return Files.readString(path);
         } catch (IOException e) {
