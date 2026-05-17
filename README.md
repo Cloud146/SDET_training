@@ -1,16 +1,5 @@
 # SDET Training Project — E2E Test Automation Stand
 
-[![GitHub Actions](https://img.shields.io/badge/CI-GitHub_Actions-blue?logo=github)]()
-[![GitLab CI](https://img.shields.io/badge/CI-GitLab_CI-orange?logo=gitlab)]()
-[![Jenkins](https://img.shields.io/badge/CI-Jenkins-red?logo=jenkins)]()
-[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)]()
-[![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk)]()
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?logo=springboot)]()
-[![Selenium](https://img.shields.io/badge/Selenium-Grid-43B02A?logo=selenium)]()
-[![REST Assured](https://img.shields.io/badge/API-RestAssured-25A162)]()
-[![TestNG](https://img.shields.io/badge/Tests-TestNG-FF6F00)]()
-[![Allure](https://img.shields.io/badge/Report-Allure-FF7043)]()
-
 > Pet-проект по различным CiCd инструментам:  
 > поднимается тестовый стенд (Spring Boot + H2),  
 > на нём — UI/API автотесты (Selenium + RestAssured + TestNG + JavaFaker),  
@@ -24,18 +13,13 @@
 
 Показать **полный цикл работы SDET**: от написания UI/API тестов, до контейнеризации стенда и тестов, до интеграции в несколько CI/CD платформ и публикации отчётности.
 
-Это проект-практикум, в котором сознательно повторены реальные ситуации из работы:
-- разные окружения (локально / Docker / CI),
-- разные системы CI/CD,
-- разные способы хранения и публикации результатов тестов.
-
 ---
 
 ## Архитектура проетка
 
 ```text
 SDET_training/
-├── TestStand/          # Тестируемое приложение (SUT): Spring Boot + H2 + REST + HTML форма
+├── TestStand/          # Тестовый стенд: Spring Boot + H2 + REST + HTML форма
 │   ├── src/main/java/...
 │   ├── src/main/resources/static/index.html
 │   └── Dockerfile
@@ -58,7 +42,7 @@ SDET_training/
 ---
 
 ## Тестовый стенд
-Представляет собой E2E экосистему: Spring Boot Приложение (SUT) + H2 Database.
+Представляет собой E2E экосистему: Spring Boot Приложение + H2 Database.
 
 ### UI часть стенда
 Приложение запускает форму регистрации:
@@ -113,7 +97,7 @@ POST запрос по URL http://localhost:8080/api/register также зар�
 
 ## 🛠 Технологический стек
 
-### Тестовый стенд (SUT)
+### Тестовый стенд
 - **Java 17/21**
 - **Spring Boot 3** (Web, Data JPA)
 - **H2 Database** (file mode, `AUTO_SERVER=TRUE`)
