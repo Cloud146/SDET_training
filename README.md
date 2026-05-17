@@ -1,9 +1,8 @@
-# SDET Training Project — End-to-End Test Automation Stand
+# SDET Training Project — E2E Test Automation Stand
 
 [![GitHub Actions](https://img.shields.io/badge/CI-GitHub_Actions-blue?logo=github)]()
 [![GitLab CI](https://img.shields.io/badge/CI-GitLab_CI-orange?logo=gitlab)]()
 [![Jenkins](https://img.shields.io/badge/CI-Jenkins-red?logo=jenkins)]()
-[![TeamCity](https://img.shields.io/badge/CI-TeamCity-black?logo=teamcity)]()
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)]()
 [![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk)]()
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?logo=springboot)]()
@@ -275,7 +274,6 @@ selenium.url=http://localhost:4444/wd/hub
 - В GitHub Actions: публикуется на GitHub Pages
 - В GitLab CI: публикуется на GitLab Pages
 - В Jenkins: вкладка Allure Report у билда
-- В TeamCity: артефакт `allure-report/index.html`
 
 Скриншоты UI и логи API запросов автоматически попадают в отчёт.
 
