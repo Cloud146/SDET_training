@@ -14,7 +14,7 @@
 
 > Pet-проект по различным CiCd инструментам:  
 > поднимается тестовый стенд (Spring Boot + H2),  
-> на нём — UI/API автотесты (Selenium + RestAssured + TestNG),  
+> на нём — UI/API автотесты (Selenium + RestAssured + TestNG + JavaFaker),  
 > вся инфраструктура запускается в Docker Compose,  
 > прогон + отчётность интегрированы с **GitHub Actions / GitLab CI / Jenkins**,  
 > отчёты — **Allure** (включая публикацию на GitHub Pages / GitLab Pages).
@@ -64,14 +64,24 @@ SDET_training/
 ### UI часть стенда
 Приложение запускает форму регистрации:
 
+![Форма авторизации](https://raw.githubusercontent.com/Cloud146/SDET_training/refs/heads/main/Screens/Screen1.png)
+
 Поля "Логин" и "Пароль" для ввода и кнопка "Отправить" для отправки запроса регистрации.
 Если поля не заполнять будет ошибка:
 
+![Форма авторизации](https://raw.githubusercontent.com/Cloud146/SDET_training/refs/heads/main/Screens/Screen2.png)
+
 После заполнения полей валидными полями появляется сообщение об успехе:
+
+![Форма авторизации](https://raw.githubusercontent.com/Cloud146/SDET_training/refs/heads/main/Screens/Screen3.png)
 
 А в базе данных появится соответствующая запись:
 
+![Скрин базы данных](https://raw.githubusercontent.com/Cloud146/SDET_training/refs/heads/main/Screens/Screen4.png)
+
 Если ввести данные существующего пользователя - появится сообщение об ошибке, данные добавлены не будут:
+
+![Форма авторизации](https://raw.githubusercontent.com/Cloud146/SDET_training/refs/heads/main/Screens/Screen5.png)
 
 ### API часть стенда
 
@@ -80,8 +90,8 @@ POST запрос по URL http://localhost:8080/api/register также зар�
 
 ```json
 {
-    "username": "Olechka3",
-    "password": "cute"
+    "username": "User1",
+    "password": "password"
 }
 ```
 
@@ -89,9 +99,9 @@ POST запрос по URL http://localhost:8080/api/register также зар�
 
 ```json
 {
-    "id": 4,
-    "username": "Olechka3",
-    "password": "cute"
+    "id": 1,
+    "username": "User1",
+    "password": "password"
 }
 ```
 
@@ -223,7 +233,6 @@ Workflow: `.github/workflows/main.yml`
 - Логи запроса/ответа автоматически прикладываются в Allure через `AllureRestAssured`
 
 ### База данных
-- Перед тестами выполняется `clean_db.sql` через `DbUtils`
 - Подключение к H2 (file mode, `AUTO_SERVER=TRUE`)
 - Возможность подключиться к этой же БД из DBeaver параллельно с приложением
 
@@ -269,3 +278,5 @@ selenium.url=http://localhost:4444/wd/hub
 - В TeamCity: артефакт `allure-report/index.html`
 
 Скриншоты UI и логи API запросов автоматически попадают в отчёт.
+
+<a href="https://cloud146.github.io/SDET_training/">Посмотреть отчёт в GitHub Pages</a>
